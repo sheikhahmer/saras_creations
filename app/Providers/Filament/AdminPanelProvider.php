@@ -19,6 +19,7 @@ use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken;
 use Illuminate\Routing\Middleware\SubstituteBindings;
 use Illuminate\Session\Middleware\StartSession;
 use Illuminate\View\Middleware\ShareErrorsFromSession;
+use Illuminate\Support\HtmlString;
 
 class AdminPanelProvider extends PanelProvider
 {
@@ -28,6 +29,7 @@ class AdminPanelProvider extends PanelProvider
     ->id('admin')
     ->path('admin')
     ->login()
+    ->brandLogo(new HtmlString('<img src="' . asset('assets/image/logo.jpeg') . '" class="h-10 w-auto logo">'))
     ->colors([
         'primary' => Color::Amber,
     ])
