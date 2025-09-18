@@ -2,6 +2,7 @@
 
 namespace App\Providers\Filament;
 
+use App\Filament\Admin\Widgets\StatsOverview;
 use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\AuthenticateSession;
 use Filament\Http\Middleware\DisableBladeIconComponents;
@@ -26,7 +27,7 @@ class AdminPanelProvider extends PanelProvider
         return $panel
     ->id('admin')
     ->path('admin')
-    ->login() 
+    ->login()
     ->colors([
         'primary' => Color::Amber,
     ])
@@ -37,8 +38,7 @@ class AdminPanelProvider extends PanelProvider
     ])
     ->discoverWidgets(in: app_path('Filament/Admin/Widgets'), for: 'App\Filament\Admin\Widgets')
     ->widgets([
-        AccountWidget::class,
-        FilamentInfoWidget::class,
+        StatsOverview::class,
     ])
     ->middleware([
         EncryptCookies::class,
@@ -51,6 +51,7 @@ class AdminPanelProvider extends PanelProvider
         DisableBladeIconComponents::class,
         DispatchServingFilamentEvent::class,
     ])
+    ->viteTheme('resources/css/filament/admin/theme.css')
     ->authMiddleware([
         Authenticate::class,
     ]);
