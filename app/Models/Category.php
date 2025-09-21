@@ -28,4 +28,10 @@ class Category extends Model
     {
         return $this->hasMany(Product::class);
     }
+
+    public function orderItems()
+    {
+        return $this->hasMany(OrderItem::class);
+    }
+
 }

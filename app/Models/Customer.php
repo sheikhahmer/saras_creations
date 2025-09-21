@@ -12,4 +12,10 @@ class Customer extends Model
         'address',
         'city',
     ];
+
+    public function orders()
+    {
+        return $this->hasMany(Order::class);
+    }
+
 }
