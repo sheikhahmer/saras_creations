@@ -23,6 +23,8 @@ class OrderForm
     {
         return $schema->components([
             Grid::make(1)->schema([
+
+                // Customer Info
                 Section::make('Customer Info')->schema([
                     Select::make('customer_id')
                         ->label('Customer')
@@ -49,12 +51,11 @@ class OrderForm
                     TextInput::make('phone_no')->label('Contact')->disabled()->dehydrated(false),
                     TextInput::make('city')->label('City')->disabled()->dehydrated(false),
                     Textarea::make('customer_address')->disabled()->dehydrated(false),
-                ]) ->columns(1)   // ✅ force single column (full width)
-                ->columnSpanFull(),
+                ])->columns(1)->columnSpanFull(),
 
                 // Order items (repeater)
-            Section::make('Order Items')->schema([
-                Repeater::make('items')
+                Section::make('Order Items')->schema([
+                    Repeater::make('items')
                         ->relationship('items')
                         ->schema([
                             Select::make('category_id')
@@ -85,7 +86,7 @@ class OrderForm
                                     $variant = ProductVariant::find($state);
                                     if ($variant) {
                                         $set('price', (float) $variant->price);
-                                        $qty = (int) ($get('quantity') ?? 1);
+                                        $qty = (float) ($get('quantity') ?? 1);
                                         $set('subtotal', (float) $variant->price * $qty);
                                     } else {
                                         $set('price', null);
@@ -100,14 +101,37 @@ class OrderForm
                                 ->dehydrated(),
 
                             TextInput::make('quantity')
-                                ->label('Quantity')
+                                ->label('Quantity (kg)')
                                 ->numeric()
+                                ->step(0.5) // ✅ allow half kg
                                 ->default(1)
                                 ->reactive()
                                 ->live(onBlur: true)
+                                ->rules(function (callable $get) {
+                                    return [
+                                        function (string $attribute, $value, \Closure $fail) use ($get) {
+                                            $variantId = $get('product_variant_id');
+                                            if ($variantId) {
+                                                $variant = \App\Models\ProductVariant::find($variantId);
+
+                                                if (!$variant) {
+                                                    return;
+                                                }
+                                                if ($variant->quantity <= 0) {
+                                                    $fail("{$variant->product->name} ({$variant->size} / {$variant->color}) is out of stock.");
+                                                    return;
+                                                }
+
+                                                if ($value > $variant->quantity) {
+                                                    $fail("Only {$variant->quantity} left in stock for {$variant->product->name} ({$variant->size} / {$variant->color}).");
+                                                }
+                                            }
+                                        },
+                                    ];
+                                })
                                 ->afterStateUpdated(function ($state, $set, $get) {
                                     $price = (float) ($get('price') ?? 0);
-                                    $set('subtotal', $price * (int) $state);
+                                    $set('subtotal', $price * (float) $state); // ✅ use float
                                 }),
 
                             TextInput::make('subtotal')
@@ -118,27 +142,46 @@ class OrderForm
                         ])
                         ->columns(3)
                         ->createItemButtonLabel('Add Product')
-                        ->afterStateUpdated(function ($state, $set) {
-                            $set('total_amount', collect($state ?? [])
-                                ->sum(fn ($i) => ((float) ($i['price'] ?? 0) * (int) ($i['quantity'] ?? 0)))
-                            );
+                        ->afterStateUpdated(function ($state, $set, $get) {
+                            $itemsTotal = collect($state ?? [])
+                                ->sum(fn ($i) => ((float) ($i['price'] ?? 0) * (float) ($i['quantity'] ?? 0)));
+
+                            $shipping = (float) ($get('shipping_charges') ?? 0);
+
+                            $set('total_amount', $itemsTotal + $shipping);
                         }),
                 ]),
 
-            Section::make('Order Summary')->schema([
-                TextInput::make('total_amount')
-                    ->label('Total')
-                    ->numeric()
-                    ->disabled()
-                    ->dehydrated()
-                    ->afterStateHydrated(function ($state, $set, $get) {
-                        $set('total_amount', collect($get('items') ?? [])
-                            ->sum(fn ($i) => ((float) ($i['price'] ?? 0) * (int) ($i['quantity'] ?? 0)))
-                        );
-                    })
-                    ->extraAttributes(['style' => 'font-weight:bold; font-size:16px;']),
-                ]),
+                // Order Summary
+                Section::make('Order Summary')->schema([
 
+                    TextInput::make('shipping_charges')
+                        ->label('Delivery Charges')
+                        ->numeric()
+                        ->default(0)
+                        ->reactive()
+                        ->afterStateUpdated(function ($state, $set, $get) {
+                            $itemsTotal = collect($get('items') ?? [])
+                                ->sum(fn ($i) => ((float) ($i['price'] ?? 0) * (float) ($i['quantity'] ?? 0)));
+
+                            $set('total_amount', $itemsTotal + (float) $state);
+                        }),
+
+                    TextInput::make('total_amount')
+                        ->label('Total')
+                        ->numeric()
+                        ->disabled()
+                        ->dehydrated()
+                        ->afterStateHydrated(function ($state, $set, $get) {
+                            $itemsTotal = collect($get('items') ?? [])
+                                ->sum(fn ($i) => ((float) ($i['price'] ?? 0) * (float) ($i['quantity'] ?? 0)));
+
+                            $shipping = (float) ($get('shipping_charges') ?? 0);
+
+                            $set('total_amount', $itemsTotal + $shipping);
+                        })
+                        ->extraAttributes(['style' => 'font-weight:bold; font-size:16px;']),
+                ]),
             ]),
         ]);
     }

@@ -14,6 +14,7 @@ class Order extends Model
         'order_date',
         'status',
         'total_amount',
+        'shipping_charges',
     ];
 
     public function customer()

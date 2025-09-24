@@ -39,4 +39,13 @@ class OrderItem extends Model
         return $this->belongsTo(ProductVariant::class, 'product_variant_id');
     }
 
+    protected static function booted()
+    {
+        // When a new order item is created → decrease stock
+        static::created(function ($item) {
+            if ($item->variant) {
+                $item->variant->decrement('quantity', $item->quantity);
+            }
+        });
+    }
 }
