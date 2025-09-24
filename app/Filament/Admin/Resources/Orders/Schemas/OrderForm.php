@@ -182,8 +182,8 @@ class OrderForm
                         })
                         ->extraAttributes(['style' => 'font-weight:bold; font-size:16px;']),
                 ]),
-            ]),
             ])->columnSpanFull(),
+
         ]);
     }
 
