@@ -26,37 +26,50 @@ class AdminPanelProvider extends PanelProvider
     public function panel(Panel $panel): Panel
     {
         return $panel
-    ->id('admin')
-    ->path('admin')
-    ->login()
-    ->brandLogo(new HtmlString('<img src="' . asset('assets/image/logo.jpeg') . '" class="h-10 w-auto logo">'))
-    ->colors([
-        'primary' => Color::Amber,
-    ])
-    ->discoverResources(in: app_path('Filament/Admin/Resources'), for: 'App\Filament\Admin\Resources')
-    ->discoverPages(in: app_path('Filament/Admin/Pages'), for: 'App\Filament\Admin\Pages')
-    ->pages([
-        Dashboard::class,
-    ])
-    ->discoverWidgets(in: app_path('Filament/Admin/Widgets'), for: 'App\Filament\Admin\Widgets')
-    ->widgets([
-        StatsOverview::class,
-    ])
-    ->middleware([
-        EncryptCookies::class,
-        AddQueuedCookiesToResponse::class,
-        StartSession::class,
-        AuthenticateSession::class,
-        ShareErrorsFromSession::class,
-        VerifyCsrfToken::class,
-        SubstituteBindings::class,
-        DisableBladeIconComponents::class,
-        DispatchServingFilamentEvent::class,
-    ])
-    ->viteTheme('resources/css/filament/admin/theme.css')
-    ->authMiddleware([
-        Authenticate::class,
-    ]);
-
+            ->id('admin')
+            ->path('admin')
+            ->login()
+            ->darkMode(false)
+            ->brandLogo( new HtmlString('<img src="' . asset('assets/image/logo2.png') . '" class="h-[5.5rem]" />'))
+            ->brandLogoHeight('5.5rem')
+            ->colors([
+                'primary' => [
+                    50  => '#F5F7F2',
+                    100 => '#E5E9DE',
+                    200 => '#CCD4BD',
+                    300 => '#B3BE9D',
+                    400 => '#97A77C',
+                    500 => '#6A7656',
+                    600 => '#5C664B',
+                    700 => '#4E5640',
+                    800 => '#404635',
+                    900 => '#303429',
+                    950 => '#1B1E15',
+                ],
+            ])
+            ->discoverResources(in: app_path('Filament/Admin/Resources'), for: 'App\Filament\Admin\Resources')
+            ->discoverPages(in: app_path('Filament/Admin/Pages'), for: 'App\Filament\Admin\Pages')
+            ->pages([
+                Dashboard::class,
+            ])
+            ->discoverWidgets(in: app_path('Filament/Admin/Widgets'), for: 'App\Filament\Admin\Widgets')
+            ->widgets([
+                StatsOverview::class,
+            ])
+            ->middleware([
+                EncryptCookies::class,
+                AddQueuedCookiesToResponse::class,
+                StartSession::class,
+                AuthenticateSession::class,
+                ShareErrorsFromSession::class,
+                VerifyCsrfToken::class,
+                SubstituteBindings::class,
+                DisableBladeIconComponents::class,
+                DispatchServingFilamentEvent::class,
+            ])
+            ->viteTheme('resources/css/filament/admin/theme.css')
+            ->authMiddleware([
+                Authenticate::class,
+            ]);
     }
 }

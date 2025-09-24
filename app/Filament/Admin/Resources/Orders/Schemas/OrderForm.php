@@ -49,7 +49,7 @@ class OrderForm
                     TextInput::make('phone_no')->label('Contact')->disabled()->dehydrated(false),
                     TextInput::make('city')->label('City')->disabled()->dehydrated(false),
                     Textarea::make('customer_address')->disabled()->dehydrated(false),
-                ]) ->columns(1)   // ✅ force single column (full width)
+                ]) ->columns(2)
                 ->columnSpanFull(),
 
                 // Order items (repeater)
@@ -139,7 +139,7 @@ class OrderForm
                     ->extraAttributes(['style' => 'font-weight:bold; font-size:16px;']),
                 ]),
 
-            ]),
+            ])->columnSpanFull(),
         ]);
     }
 

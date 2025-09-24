@@ -8,3 +8,64 @@
 .fi-sidebar-item-btn {
     @apply border-[1px] border-red-100
 }
+
+.fi-topbar{
+    @apply h-[100px]
+}
+
+/* Sidebar */
+.fi-sidebar-nav {
+    @apply bg-white;
+}
+li.fi-sidebar-item.fi-active.fi-sidebar-item-has-url > .fi-sidebar-item-btn {
+    @apply bg-[#6A7656];
+}
+.fi-sidebar-item.fi-active > .fi-sidebar-item-btn > .fi-sidebar-item-label {
+    @apply text-white;
+}
+.fi-sidebar-item.fi-active > .fi-sidebar-item-btn > .fi-icon {
+    @apply text-white;
+}
+
+.fi-sidebar-group-btn {
+    @apply border-[1px] border-[#6A7656] rounded-lg;
+}
+svg.fi-icon.fi-size-md {
+    @apply text-[#6A7656];
+}
+.fi-wi-stats-overview-stat {
+    @apply border-[1px] border-[#6A7656];
+}
+
+.dashboard-stat {
+    @apply flex justify-between gap-4 h-40 items-center p-6 bg-gray-100 rounded-xl shadow-lg border-[1px] border-[#6A7656]
+    transition transform duration-300 ease-in-out hover:scale-105 hover:shadow-xl hover:bg-white;
+}
+
+.dashboard-stat-title {
+    @apply text-sm font-medium text-gray-500;
+}
+
+.dashboard-stat-value {
+    @apply mt-2 text-3xl font-bold text-gray-800;
+}
+
+.dashboard-stat-description {
+    @apply mt-1 text-sm text-gray-500;
+}
+
+.dashboard-stat-icon {
+    @apply flex items-center justify-center w-12 h-12 bg-gray-200 rounded-lg
+    transition-colors duration-300 ease-in-out group-hover:bg-[#6A7656];
+}
+
+.dashboard-stat-icon svg {
+    @apply w-6 h-6 text-gray-600 transition-colors duration-300 ease-in-out group-hover:text-white;
+}
+
+section.fi-section{
+    @apply bg-transparent;
+}
+.fi-sidebar-group-label{
+    @apply text-[#6A7656];
+}
