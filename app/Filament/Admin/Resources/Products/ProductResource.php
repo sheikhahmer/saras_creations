@@ -18,14 +18,14 @@ use Filament\Forms\Components\Repeater;
 use Filament\Schemas\Components\Tabs;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Actions\Action;
-use App\Filament\Admin\Resources\Products\Pages\ProductVariants; 
+use App\Filament\Admin\Resources\Products\Pages\ProductVariants;
 
 
 class ProductResource extends Resource
 {
     protected static ?string $model = Product::class;
 
-    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
+    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedQueueList;
 
     protected static ?string $recordTitleAttribute = 'Product';
 
@@ -140,7 +140,7 @@ public static function table(Table $table): Table
             'index' => ListProducts::route('/'),
             'create' => CreateProduct::route('/create'),
             'edit' => EditProduct::route('/{record}/edit'),
-    
+
         ];
     }
 }
