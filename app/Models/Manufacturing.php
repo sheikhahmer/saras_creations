@@ -7,35 +7,31 @@ use Illuminate\Database\Eloquent\Model;
 class Manufacturing extends Model
 {
     protected $fillable = [
-        'purchase_id',
-        'manufacturing_cost_per_kg',
-        'total_manufacturing_cost',
-        'final_cost',
-        'wastage_kg',
-        'net_stock_kg',
+        'manufacturer',
+        'quantity',
+        'cost_per_kg',
+        'paid_amount',
+        'manufactured_at',
     ];
 
-    protected static function booted()
+    protected $casts = [
+        'manufactured_at' => 'date',
+    ];
+
+    public function manufacturer()
     {
-        static::saving(function ($mfg) {
-            $purchase = Purchase::find($mfg->purchase_id);
-
-            if ($purchase) {
-                // total manufacturing cost
-                $mfg->total_manufacturing_cost = round($purchase->quantity_kg * $mfg->manufacturing_cost_per_kg, 2);
-
-                // final cost = purchase total + manufacturing total
-                $mfg->final_cost = round($purchase->total_amount + $mfg->total_manufacturing_cost, 2);
-
-                // net stock after wastage
-                $mfg->net_stock_kg = round($purchase->quantity_kg - $mfg->wastage_kg, 3);
-            }
-        });
+        return $this->belongsTo(Manufacturer::class);
     }
 
-    public function purchase()
+    // Accessors if DB doesn’t support generated columns
+    public function getTotalCostAttribute()
     {
-        return $this->belongsTo(Purchase::class);
+        return $this->quantity * $this->cost_per_kg;
+    }
+
+    public function getDueAmountAttribute()
+    {
+        return $this->total_cost - $this->paid_amount;
     }
 }
 

@@ -14,6 +14,7 @@ class Order extends Model
         'order_date',
         'status',
         'total_amount',
+        'tracking_id',
         'shipping_charges',
     ];
 
@@ -24,7 +25,7 @@ class Order extends Model
 
     public function items()
     {
-        return $this->hasMany(OrderItem::class);
+        return $this->hasMany(OrderItem::class,'order_id');
     }
 }
 

@@ -167,7 +167,13 @@ class OrderForm
                             $set('total_amount', $itemsTotal + (float) $state);
                         }),
 
-                    TextInput::make('total_amount')
+
+                    TextInput::make('tracking_id')
+                        ->label('Tracking ID')
+                        ->required()
+                        ->maxLength(20),
+
+        TextInput::make('total_amount')
                         ->label('Total')
                         ->numeric()
                         ->disabled()

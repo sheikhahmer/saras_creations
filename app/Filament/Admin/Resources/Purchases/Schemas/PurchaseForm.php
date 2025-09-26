@@ -18,11 +18,6 @@ class PurchaseForm
                 ->searchable()
                 ->required(),
 
-
-        TextInput::make('material_name')
-                ->label('Material')
-                ->required(),
-
             TextInput::make('quantity_kg')
                 ->numeric()
                 ->required()

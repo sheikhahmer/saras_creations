@@ -18,9 +18,6 @@ class PurchasesTable
                     ->label('Vendor')
                     ->sortable()
                     ->searchable(),
-
-                TextColumn::make('material_name')
-                    ->searchable(),
                 TextColumn::make('quantity_kg')
                     ->numeric()
                     ->sortable(),

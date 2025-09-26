@@ -11,10 +11,9 @@ return new class extends Migration
         Schema::create('product_variants', function (Blueprint $table) {
             $table->id();
             $table->foreignId('product_id')->constrained()->onDelete('cascade');
-            $table->string('sku')->unique();
             $table->string('size')->nullable();
             $table->string('color')->nullable();
-            $table->decimal('quantity', 10, 2)->default(0); // 10 total digits, 2 after decimal
+            $table->decimal('quantity', 8, 2)->default(0);
             $table->decimal('price', 10, 2)->default(0);
             $table->timestamps();
         });

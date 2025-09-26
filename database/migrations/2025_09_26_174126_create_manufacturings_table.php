@@ -13,12 +13,16 @@ return new class extends Migration
     {
         Schema::create('manufacturings', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('purchase_id')->constrained('purchases')->cascadeOnDelete();
-            $table->decimal('manufacturing_cost_per_kg', 14, 4);
-            $table->decimal('total_manufacturing_cost', 16, 2)->nullable();
-            $table->decimal('final_cost', 16, 2)->nullable();
-            $table->decimal('wastage_kg', 12, 3)->default(0);
-            $table->decimal('net_stock_kg', 12, 3)->nullable();
+            $table->string('manufacturer');
+
+            $table->decimal('quantity', 8, 2); // in KG
+            $table->decimal('cost_per_kg', 10, 2);
+            $table->decimal('total_cost', 12, 2)->virtualAs('quantity * cost_per_kg'); // auto-calculated
+
+            $table->decimal('paid_amount', 12, 2)->default(0);
+            $table->decimal('due_amount', 12, 2)->storedAs('total_cost - paid_amount'); // auto-calc stored
+
+            $table->date('manufactured_at');
             $table->timestamps();
         });
     }

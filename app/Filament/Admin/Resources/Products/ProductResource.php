@@ -59,11 +59,6 @@ class ProductResource extends Resource
                             Repeater::make('variants')
                                 ->relationship('variants')
                                 ->schema([
-                                    TextInput::make('sku')
-                                        ->label('SKU')
-                                        ->required()
-                                        ->unique(ignorable: fn ($record) => $record)
-                                        ->columnSpan(1),
                                     TextInput::make('size')
                                         ->placeholder('e.g., 3mm, 10cm, Large')
                                         ->columnSpan(1),
@@ -111,18 +106,6 @@ public static function table(Table $table): Table
                 ->label('Category')
                 ->sortable()
                 ->searchable(),
-        ])
-        ->actions([
-            Action::make('viewVariants')
-                ->label('View Variants')
-                ->icon('heroicon-o-eye')
-                ->modalHeading(fn ($record) => 'Variants of ' . $record->name)
-                ->modalContent(function ($record) {
-                    return view('table.columns.variants', [
-                        'variants' => $record->variants,
-                    ]);
-                })
-                ->modalWidth('6xl'),
         ])
         ->defaultSort('name');
 }

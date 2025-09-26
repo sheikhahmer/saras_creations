@@ -8,7 +8,6 @@ class Purchase extends Model
 {
     protected $fillable = [
         'vendor_id',
-        'material_name',
         'quantity_kg',
         'rate_per_kg',
         'total_amount',

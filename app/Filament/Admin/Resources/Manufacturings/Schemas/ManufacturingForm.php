@@ -2,70 +2,58 @@
 
 namespace App\Filament\Admin\Resources\Manufacturings\Schemas;
 
-use Filament\Forms\Components\Select;
+use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\TextInput;
 use Filament\Schemas\Schema;
-use App\Models\Purchase;
 
 class ManufacturingForm
 {
     public static function configure(Schema $schema): Schema
     {
-        return $schema->components([
-            Select::make('purchase_id')
-                ->label('Purchase')
-                ->options(
-                    \App\Models\Purchase::with('vendor')
-                        ->get()
-                        ->mapWithKeys(fn ($purchase) => [
-                            $purchase->id => "{$purchase->material_name} ({$purchase->vendor?->name})"
-                        ])
-                )
-                ->searchable()
-                ->required(),
+        return $schema
+            ->components([
+                TextInput::make('manufacturer')
+                    ->required(),
 
+                TextInput::make('quantity')
+                    ->required()
+                    ->numeric()
+                    ->reactive()
+                    ->afterStateUpdated(fn ($state, callable $set, callable $get) =>
+                    $set('total_cost', $state * $get('cost_per_kg'))
+                    ),
 
-        TextInput::make('manufacturing_cost_per_kg')
-                ->numeric()
-                ->required()
-                ->reactive()
-                ->afterStateUpdated(function ($state, callable $set, callable $get) {
-                    $purchase = Purchase::find($get('purchase_id'));
-                    if ($purchase) {
-                        $totalManu = $purchase->quantity_kg * $state;
-                        $set('total_manufacturing_cost', $totalManu);
-                        $set('final_cost', $purchase->total_amount + $totalManu);
+                TextInput::make('cost_per_kg')
+                    ->required()
+                    ->numeric()
+                    ->default(100) // default per KG cost
+                    ->reactive()
+                    ->afterStateUpdated(fn ($state, callable $set, callable $get) =>
+                    $set('total_cost', $state * $get('quantity'))
+                    ),
 
-                        $wastage = $get('wastage_kg') ?? 0;
-                        $set('net_stock_kg', $purchase->quantity_kg - $wastage);
-                    }
-                }),
+                TextInput::make('total_cost')
+                    ->numeric()
+                    ->disabled() // read-only
+                    ->dehydrated(false), // don't save directly, calculate in model
 
-            TextInput::make('total_manufacturing_cost')
-                ->numeric()
-                ->disabled()
-                ->dehydrated(),
+                TextInput::make('paid_amount')
+                    ->required()
+                    ->numeric()
+                    ->default(0.0)
+                    ->reactive()
+                    ->afterStateUpdated(fn ($state, callable $set, callable $get) =>
+                    $set('due_amount', ($get('total_cost') ?? 0) - $state)
+                    ),
 
-            TextInput::make('final_cost')
-                ->numeric()
-                ->disabled()
-                ->dehydrated(),
+                TextInput::make('due_amount')
+                    ->numeric()
+                    ->disabled() // read-only
+                    ->dehydrated(false), // auto-calculated only
 
-            TextInput::make('wastage_kg')
-                ->numeric()
-                ->default(0)
-                ->reactive()
-                ->afterStateUpdated(function ($state, callable $set, callable $get) {
-                    $purchase = Purchase::find($get('purchase_id'));
-                    if ($purchase) {
-                        $set('net_stock_kg', $purchase->quantity_kg - $state);
-                    }
-                }),
-
-            TextInput::make('net_stock_kg')
-                ->numeric()
-                ->disabled()
-                ->dehydrated(),
-        ]);
+                DatePicker::make('manufactured_at')
+                    ->required(),
+            ]);
     }
+
 }

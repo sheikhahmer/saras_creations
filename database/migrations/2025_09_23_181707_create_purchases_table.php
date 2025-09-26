@@ -14,7 +14,6 @@ return new class extends Migration
         Schema::create('purchases', function (Blueprint $table) {
             $table->id();
             $table->foreignId('vendor_id')->constrained()->cascadeOnDelete();
-            $table->string('material_name');
             $table->decimal('quantity_kg', 12, 3);
             $table->decimal('rate_per_kg', 14, 4);
             $table->decimal('total_amount', 16, 2)->nullable();

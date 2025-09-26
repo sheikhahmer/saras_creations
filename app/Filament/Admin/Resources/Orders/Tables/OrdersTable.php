@@ -9,6 +9,8 @@ use Filament\Actions\EditAction;
 use Filament\Tables\Table;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Columns\BadgeColumn;
+use Filament\Actions\Action;
+use Barryvdh\DomPDF\Facade\Pdf;
 
 class OrdersTable
 {
@@ -28,6 +30,10 @@ class OrdersTable
                     ->sortable()
                     ->getStateUsing(fn ($record) => $record->created_at ? $record->created_at->format('d F Y') : 'N/A'), // Formats the date as '25 September 2025'
 
+                TextColumn::make('weight')
+                    ->label('Weight')
+                    ->sortable()
+                    ->searchable(),
 
                 // Order Status with Badge and Conditional Colors
                 BadgeColumn::make('status')
@@ -78,8 +84,32 @@ class OrdersTable
                 // Add any filters you need for order status, customer, etc.
             ])
             ->recordActions([
-                EditAction::make(),  // To edit the order
+                EditAction::make(),
+                Action::make('downloadPdf')
+                    ->label('Download PDF')
+                    ->icon('heroicon-o-document-arrow-down')
+                    ->action(function ($record) {
+                        $logoPath = public_path('assets/image/logo2.png');
+
+                        $logo = null;
+                        if (file_exists($logoPath)) {
+                            $logo = base64_encode(file_get_contents($logoPath));
+                        }
+
+                        $pdf = \Barryvdh\DomPDF\Facade\Pdf::loadView('pdf.pdf', [
+                            'order' => $record,
+                            'logo'  => $logo,
+                        ]);
+
+                        return response()->streamDownload(
+                            fn () => print($pdf->output()),
+                            "order-{$record->id}.pdf"
+                        );
+                    }),
+
+
             ])
+
             ->toolbarActions([
                 BulkActionGroup::make([
                     DeleteBulkAction::make(),  // To delete multiple orders

@@ -44,7 +44,10 @@ class OrderItem extends Model
         // When a new order item is created → decrease stock
         static::created(function ($item) {
             if ($item->variant) {
-                $item->variant->decrement('quantity', $item->quantity);
+                $item->variant->update([
+                    'quantity' => $item->variant->quantity - $item->quantity
+                ]);
+
             }
         });
     }
