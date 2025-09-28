@@ -11,7 +11,8 @@ use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Columns\BadgeColumn;
 use Filament\Actions\Action;
 use Barryvdh\DomPDF\Facade\Pdf;
-
+use Filament\Tables\Columns\SelectColumn;
+use Filament\Tables\Filters\SelectFilter;
 class OrdersTable
 {
     public static function configure(Table $table): Table
@@ -35,37 +36,16 @@ class OrdersTable
                     ->sortable()
                     ->searchable(),
 
-                // Order Status with Badge and Conditional Colors
-                BadgeColumn::make('status')
+
+                SelectColumn::make('status')
                     ->label('Status')
+                    ->options([
+                        'unpaid' => 'Unpaid',
+                        'paid'   => 'Paid',
+                    ])
                     ->sortable()
-                    ->getStateUsing(function ($record) {
-                        $status = $record->status;
-                        $color = null; // Default to null if no match
-
-                        // Determine color based on status
-                        if ($status == 'pending') {
-                            $color = 'danger'; // Red for pending
-                        } elseif ($status == 'confirmed') {
-                            $color = 'primary'; // Blue for confirmed
-                        } elseif ($status == 'shipped') {
-                            $color = 'warning'; // Yellow for shipped
-                        } elseif ($status == 'completed') {
-                            $color = 'success'; // Green for completed
-                        } elseif ($status == 'cancelled') {
-                            $color = 'secondary'; // Gray for cancelled
-                        }
-
-                        return $color; // Return only the color
-                    })
-                    ->colors([
-                        'danger' => 'pending',
-                        'primary' => 'confirmed',
-                        'warning' => 'shipped',
-                        'success' => 'completed',
-                        'secondary' => 'cancelled',
-                    ]),
-
+                    ->searchable()
+                   ,
 
                 // Shipping Charges (Formatted as Money using getStateUsing())
                 TextColumn::make('shipping_charges')
@@ -81,7 +61,10 @@ class OrdersTable
 
             ])
             ->filters([
-                // Add any filters you need for order status, customer, etc.
+                SelectFilter::make('customer')
+                    ->label('Customer')
+                    ->relationship('customer', 'name') // search by customer name
+                    ->searchable(), // allows searching inside the dropdown
             ])
             ->recordActions([
                 EditAction::make(),
@@ -96,7 +79,7 @@ class OrdersTable
                             $logo = base64_encode(file_get_contents($logoPath));
                         }
 
-                        $pdf = \Barryvdh\DomPDF\Facade\Pdf::loadView('pdf.pdf', [
+                        $pdf = \Barryvdh\DomPDF\Facade\Pdf::loadView('pdf.order-invoice', [
                             'order' => $record,
                             'logo'  => $logo,
                         ]);

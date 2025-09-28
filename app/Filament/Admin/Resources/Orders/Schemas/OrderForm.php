@@ -78,9 +78,13 @@ class OrderForm
                                 ->options(fn ($get) => $get('product_id')
                                     ? ProductVariant::where('product_id', $get('product_id'))
                                         ->get()
-                                        ->mapWithKeys(fn ($v) => [$v->id => "{$v->size} / {$v->color} - {$v->price}"])
-                                        ->toArray()
-                                    : [])
+                                        ->mapWithKeys(fn ($v) => [
+                                            $v->id => "{$v->size} / {$v->color} - {$v->price}" . ($v->quantity <= 0 ? ' (Out of Stock)' : '')
+                                        ])->toArray()
+                                    : []
+                                )
+                                // <-- disable individual options when their id refers to an out-of-stock variant
+                                ->disableOptionWhen(fn ($value) => ProductVariant::where('id', $value)->where('quantity', '<=', 0)->exists())
                                 ->searchable()
                                 ->reactive()
                                 ->afterStateUpdated(function ($state, $set, $get) {

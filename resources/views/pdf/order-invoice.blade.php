@@ -155,9 +155,9 @@
                         </small>
                     @endif
                 </td>
-                <td>${{ number_format($item->price, 2) }}</td>
+                <td>Rs {{ number_format($item->price, 2) }}</td>
                 <td>{{ $item->quantity }}</td>
-                <td>${{ number_format($item->subtotal, 2) }}</td>
+                <td>Rs {{ number_format($item->subtotal, 2) }}</td>
             </tr>
         @endforeach
         </tbody>
@@ -187,7 +187,7 @@
         <p>Bank: Meezan Bank | Account Name: Sara Creation | Account #: 05810104804384</p>
         <hr style="margin:15px 0;">
         <p style="font-size:14px; color:#555;">
-            Thank you for shopping with <strong>Sara Creation</strong> 💖<br>
+            Thank you for shopping with <strong>Sara Creation</strong>  <br>
             We truly appreciate your support and look forward to serving you again!
         </p>
     </div>

@@ -16,10 +16,9 @@ return new  class extends Migration
             $table->foreignId('customer_id')->constrained()->cascadeOnDelete();
             $table->date('order_date')->nullable();
             $table->string('tracking_id')->nullable();
-            $table->enum('status', ['pending', 'confirmed', 'shipped', 'completed', 'cancelled'])->default('pending');
+            $table->enum('status', ['unpaid', 'paid'])->default('unpaid');
             $table->decimal('total_amount', 10, 2)->default(0);
             $table->decimal('shipping_charges',10, 2)->nullable();
-
             $table->timestamps();
         });
     }
