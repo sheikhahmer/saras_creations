@@ -106,23 +106,40 @@
 <body>
 <div class="">
     <!-- Header -->
-    <div class="header">
-        <img src="data:image/png;base64,{{ base64_encode(file_get_contents(public_path('assets/image/logo2.png'))) }}" alt="Logo">
-        <div class="invoice-title">INVOICE</div>
-    </div>
-
-    <!-- Invoice details -->
-    <div class="details">
-        <div class="block">
-            <p><strong>INVOICE DATE:</strong> {{ $order->created_at->format('F d, Y') }}</p>
-            <p><strong>DUE DATE:</strong> {{ $order->created_at->addDays(3)->format('F d, Y') }}</p>
-        </div>
-        <div class="block">
-            <p><strong>BILL TO</strong></p>
-            <p>{{ $order->customer->name }}</p>
-            <p>{{ $order->customer->address }}</p>
-            <p>{{ $order->customer->phone_no }}</p>
-            <p>{{ $order->customer->city }}</p>
+    <table width="100%" cellspacing="0" cellpadding="0" style="border:none; border-collapse:collapse; margin-bottom:20px;">
+        <tr>
+            <!-- Left: Logo -->
+            <td style="border:none; text-align:left; padding:0; vertical-align:middle;">
+                <div class="header" style="display:inline-block; margin-left:0;">
+                    <img src="data:image/png;base64,{{ base64_encode(file_get_contents(public_path('assets/image/logo2.png'))) }}" alt="Logo" style="height:120px; width:auto; display:block;">
+                </div>
+            </td>
+            <!-- Right: Invoice Info -->
+            <td style="text-align:right; font-size:13px; color:#444; border:none;">
+                <div style="font-weight:bold; font-size:18px; margin-bottom:6px;">INVOICE</div>
+                <div>Date: {{ $order->created_at->format('d/m/Y') ?? '01/05/2023' }}</div>
+                <div>Invoice # INV-{{ $order->id }}</div>
+                <div>Tracking ID :  {{ $order->tracking_id }}</div>
+            </td>
+        </tr>
+    </table>
+    <!-- Invoice & Billing Details -->
+    <div style="width:100%; border-bottom:2px solid #ccc; padding-bottom:15px; margin-bottom:20px;">
+        <!-- Billing Details -->
+        <div style="margin-top:15px;">
+            <div style="font-size:16px; font-weight:bold; margin-bottom:8px; color:#333;">Bill To:</div>
+            <div style="font-size:14px; color:#444; margin-bottom:3px;">
+                {{ $order->customer->name ?? 'John Doe' }}
+            </div>
+            <div style="font-size:14px; color:#444; margin-bottom:3px;">
+                {{ $order->customer->address ?? '123 Main St.' }}
+            </div>
+            <div style="font-size:14px; color:#444; margin-bottom:3px;">
+                {{ $order->customer->city ?? 'Anytown, USA 12345' }}
+            </div>
+            <div style="font-size:14px; color:#444;">
+                {{ $order->customer->phone_no ?? '0300-1234567' }}
+            </div>
         </div>
     </div>
 
@@ -186,12 +203,28 @@
         <p>EasyPaisa / JazzCash: 0304-2824800 (Sara Creation)</p>
         <p>Bank: Meezan Bank | Account Name: Sara Creation | Account #: 05810104804384</p>
         <hr style="margin:15px 0;">
-        <p style="font-size:14px; color:#555;">
-            Thank you for shopping with <strong>Sara Creation</strong>  <br>
-            We truly appreciate your support and look forward to serving you again!
+        <p style="font-size:14px; color:#555; line-height:1.6; text-align:center;">
+            Thank you for choosing <strong>Sara Creation</strong>. <br>
+            Your trust means the world to us, and we’re honored to be part of your journey. <br>
+            We look forward to serving you again with the same dedication and care.
         </p>
     </div>
-
 </div>
 </body>
 </html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -86,7 +86,7 @@ class OrdersTable
 
                         return response()->streamDownload(
                             fn () => print($pdf->output()),
-                            "order-{$record->id}.pdf"
+                            "order-invoice-{$record->id}.pdf"
                         );
                     }),
 
